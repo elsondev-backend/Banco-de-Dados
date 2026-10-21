@@ -1,0 +1,22 @@
+# Sobe um MySQL 8.4 já com o banco criado e populado.
+# Os scripts da pasta sql/ rodam em ordem (01, 02, ...) só na primeira vez.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: welcar-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: welcar123
+      TZ: America/Bahia
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d:ro
+      - dados:/var/lib/mysql
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pwelcar123"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  dados:

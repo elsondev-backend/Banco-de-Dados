@@ -1,0 +1,136 @@
+erDiagram
+    FILIAL ||--o{ FUNCIONARIO : emprega
+    FILIAL ||--o{ VEICULO : "guarda"
+    CATEGORIA ||--o{ MODELO : agrupa
+    MODELO ||--o{ VEICULO : "é de"
+    CLIENTE ||--o{ RESERVA : faz
+    CATEGORIA ||--o{ RESERVA : "é reservada em"
+    FILIAL ||--o{ RESERVA : recebe
+    CLIENTE ||--o{ LOCACAO : aluga
+    VEICULO ||--o{ LOCACAO : "é alugado em"
+    FUNCIONARIO ||--o{ LOCACAO : registra
+    FILIAL ||--o{ LOCACAO : "retirada/devolução"
+    RESERVA |o--o| LOCACAO : "vira"
+    LOCACAO ||--o{ LOCACAO_ADICIONAL : inclui
+    ADICIONAL ||--o{ LOCACAO_ADICIONAL : "é contratado em"
+    LOCACAO ||--o{ PAGAMENTO : "é paga por"
+    VEICULO ||--o{ MANUTENCAO : passa
+    VEICULO ||--o{ LOG_STATUS_VEICULO : registra
+
+    FILIAL {
+        smallint id PK
+        varchar nome UK
+        varchar cidade
+        char uf
+        varchar telefone
+        boolean ativa
+    }
+    FUNCIONARIO {
+        int id PK
+        smallint filial_id FK
+        varchar nome
+        enum cargo
+        date admitido_em
+    }
+    CATEGORIA {
+        tinyint id PK
+        varchar nome UK
+        varchar descricao
+        decimal valor_diaria
+    }
+    MODELO {
+        smallint id PK
+        tinyint categoria_id FK
+        varchar marca
+        varchar nome
+        enum combustivel
+        enum cambio
+        tinyint lugares
+    }
+    VEICULO {
+        int id PK
+        smallint modelo_id FK
+        smallint filial_id FK
+        char placa UK
+        smallint ano
+        varchar cor
+        int km_atual
+        enum status
+        date adquirido_em
+        decimal valor_compra
+    }
+    CLIENTE {
+        int id PK
+        varchar nome
+        char cpf UK
+        varchar email UK
+        varchar telefone
+        date data_nascimento
+        char cnh_numero UK
+        date cnh_validade
+        varchar cidade
+        char uf
+        datetime cadastrado_em
+    }
+    ADICIONAL {
+        tinyint id PK
+        varchar nome UK
+        decimal valor_diaria
+    }
+    RESERVA {
+        int id PK
+        int cliente_id FK
+        tinyint categoria_id FK
+        smallint filial_id FK
+        datetime retirada_prevista
+        datetime devolucao_prevista
+        enum status
+        datetime criada_em
+    }
+    LOCACAO {
+        int id PK
+        int reserva_id FK,UK
+        int cliente_id FK
+        int veiculo_id FK
+        int funcionario_id FK
+        smallint filial_retirada_id FK
+        smallint filial_devolucao_id FK
+        datetime retirada_em
+        datetime devolucao_prevista
+        datetime devolvido_em
+        int km_retirada
+        int km_devolucao
+        decimal valor_diaria
+        decimal valor_total
+        enum status
+    }
+    LOCACAO_ADICIONAL {
+        int locacao_id PK,FK
+        tinyint adicional_id PK,FK
+        tinyint quantidade
+        decimal valor_diaria
+    }
+    PAGAMENTO {
+        int id PK
+        int locacao_id FK
+        decimal valor
+        enum forma
+        datetime pago_em
+    }
+    MANUTENCAO {
+        int id PK
+        int veiculo_id FK
+        enum tipo
+        varchar descricao
+        date inicio
+        date fim
+        decimal custo
+    }
+    LOG_STATUS_VEICULO {
+        bigint id PK
+        int veiculo_id FK
+        varchar status_anterior
+        varchar status_novo
+        datetime alterado_em
+        varchar usuario_bd
+    }
